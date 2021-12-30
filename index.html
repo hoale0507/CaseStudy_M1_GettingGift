@@ -3,33 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <title>Game Moving Basket</title>
+    <style>
+        canvas {
+            border: solid 1px;
+            background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSaboXaWAJX7pBvCowJQb5cUZ2db97k9N7hBA&usqp=CAU");
+            background-size: 1200px;
 
-
+        }
+    </style>
 
 </head>
 <body>
 
-<canvas id="canvas" width="1200" height="600" style="border: solid 1px"></canvas>
-<h2>Your highest score: <span style="color: orange" id="showHighestScore">hihi</span></h2>
+<canvas id="canvas" width="1200" height="600"></canvas>
+<h2>Highest score: <span id="showHighestScore" style="color: orange; font-size: xx-large" >0</span>
+    <span style="font-size: x-large">  &nbsp&nbsp&nbsp&nbsp Belong to player: </span>
+    <span id="playerName" style="font-size: x-large; color: orange"> Player 1 </span>
+</h2>
+
+<a href="#topChart">See top charts here: </a>
 
 <script src="gift.js"></script>
 <script src="basket.js"></script>
 <script src="obstacle.js"></script>
 <script src="monster.js"></script>
 <script>
+
+
     let myBasket = new Basket(0,500,200,100,"image/basket2.png",40);
 
-    let rectangle1 = new Rectangle(100,0,50,50,30,'yellow');
-    let rectangle2 = new Rectangle(400,0,90,90,40,'blue');
-    let rectangle3 = new Rectangle(900,0,120,120,50,'red');
-    let gift  = [rectangle1, rectangle2, rectangle3];
+    let rectangle1 = new Rectangle(100,0,50,50,20,'yellow');
+    let rectangle2 = new Rectangle(300,400,50,50,30,'blue');
+    let rectangle3 = new Rectangle(500,200,50,50,40,'red');
+    let rectangle4 = new Rectangle(700,300,50,50,50,'green');
+    let rectangle5 = new Rectangle(900,100,50,50,60,'purple');
+    let rectangle6 = new Rectangle(1100,500,50,50,70,'orange');
+    let rectangle7 = new Rectangle(1100,300,50,50,70,'brown');
+    let gift  = [rectangle1, rectangle2, rectangle3, rectangle4, rectangle5, rectangle6, rectangle7];
 
     let obstacle1 = new Obstacle(200,100,30,2);
-    let obstacle2 = new Obstacle(400,100,30,5);
-    let obstacle3 = new Obstacle(800,100,30,8);
-    let obstacle = [obstacle1,obstacle2,obstacle3];
+    let obstacle2 = new Obstacle(400,300,30,4);
+    let obstacle3 = new Obstacle(600,200,30,6);
+    let obstacle4 = new Obstacle(900,400,30,5);
+    let obstacle = [obstacle1,obstacle2,obstacle3,obstacle4];
 
-    let monster1 = new Monster(700,20,150,150,2,2,'image/monster.jpg');
+    let monster1 = new Monster(700,20,120,120,2,2,'image/monster.png');
     // let monster2 = new Monster(1100,20,100,100,2,2,'image/monster2.png');
     // let monster3 = new Monster(1000,600,100,100,2,2,'image/monster3.png');
     let monster = [monster1];
@@ -38,7 +56,15 @@
 
     let canvas = document.getElementById("canvas");
     let ctx = canvas.getContext('2d');
-    myBasket.drawBasket(ctx);
+
+
+    // function drawBackground(){
+    //     let img = new Image();
+    //     img.src = 'image/background.jpg';
+    //     img.onload = function (){
+    //         ctx.drawImage(img,0,0,1200,600);
+    //     }
+    // }
 
     function moveBasket(event) {
         switch (event.key) {
@@ -85,7 +111,7 @@
         for (let i = 0; i < gift.length; i++) {
             if (gift[i].y > canvas.clientHeight) {
                 gift[i].y = 0;
-                gift[i].x = Math.floor(Math.random() * 1200);
+                gift[i].x = Math.floor(Math.random() * 1100);
             }
             gift[i].moveDown();
             updateCanvas();
@@ -141,6 +167,7 @@
 
     function updateCanvas(){
         clearCanvas();
+        // drawBackground();
         myBasket.drawBasket(ctx);
         drawGift();
         drawObstacle();
@@ -149,12 +176,11 @@
         showLive();
         showRestart()
         checkGameOver();
-
     }
 
     let score = 0;
     function showScore(){
-        ctx.font = "30px Arial";
+        ctx.font = "bold 30px Copperplate";
         ctx.fillStyle = 'black';
         ctx.fillText("Your score is: " + score, 10, 170);
     }
@@ -214,7 +240,7 @@
     }
 
     function showLive(){
-        ctx.font = "30px Arial";
+        ctx.font = "bold 30px Copperplate";
         ctx.fillStyle = 'black';
         ctx.fillText("You have: " + live + " lives", 10, 210);
     }
@@ -227,19 +253,22 @@
             }
         }
 
-    let scoreListInput = [];
+    let scoreList = [];
     function checkGameOver(){
     if(gameStatus === 'over'){
-        scoreListInput.push(score);
-        window.localStorage.setItem('scoreList', JSON.stringify(scoreListInput));
-        let scoreListOutput = JSON.parse(window.localStorage.getItem('scoreList'));
-        let maxScore = scoreListOutput[0];
-        for(let i = 0; i < scoreListOutput.length; i++){
-            if(maxScore < scoreListOutput[i]){
-                maxScore = scoreListOutput[i];
+        scoreList.push(score);
+        console.log(scoreList);
+        let maxScore = scoreList[0];
+        // let playerName = 'Player 1';
+        for(let i = 0; i < scoreList.length; i++){
+            if(maxScore < scoreList[i]){
+                maxScore = scoreList[i];
+                // playerName = prompt('Congratulations! \nYou gain a new high score. Input your name below: ');
             }
         }
+
         document.getElementById('showHighestScore').innerHTML = maxScore;
+        // document.getElementById('playerName').innerHTML = playerName;
         showGameOver();
         clearInterval(interval1);
         clearInterval(interval2);
@@ -249,12 +278,19 @@
 
     function showRestart(){
         let img = new Image();
-        img.src = "image/restart.jpg";
+        img.src = "image/restart.png";
         // img.onload = function () {}
         ctx.drawImage(img,0,0,130,130);
     }
 
+    function restart(event){
+        if(event.clientX < 130 && event.clientY < 130){
+            init();
+        }
+    }
+    canvas.addEventListener('click',restart);
 
+    // drawBackground();
     drawGift();
     drawObstacle();
     showScore();
@@ -268,34 +304,23 @@
     let interval2 = setInterval(moveObstacle, 50);
     // window.onload = checkCollisionGift();
 
-
-    // function run(){
-    //     location.reload();
-    // }
-
-    function restart(event){
-        if(event.clientX < 130 && event.clientY < 130){
-            location.reload();
-        }
+    function init(){
+        gameStatus = 'play';
+        score = 0;
+        live = 3;
+        monster1.x = 700;
+        monster1.y = 20;
+        myBasket.x = 0;
+        myBasket.y = 500;
+        obstacle1.speed = 2;
+        obstacle2.speed = 5;
+        obstacle3.speed = 8;
+        updateCanvas();
+        interval1 = setInterval(moveGift, 500);
+        interval2 = setInterval(moveObstacle, 50);
+        moveMonster();
+        checkGameOver();
     }
-    canvas.addEventListener('click',restart);
-
-
-
-    // function init(){
-    //     gameStatus = 'play';
-    //     score = 0;
-    //     live = 3;
-    //     monster1.x = 700;
-    //     monster1.y = 20;
-    //     myBasket.x = 0;
-    //     myBasket.y = 500;
-    //     updateCanvas();
-    //     setInterval(moveGift, 500);
-    //     setInterval(moveObstacle, 50);
-    //     moveMonster();
-    //     checkGameOver();
-    // }
 
 </script>
 </body>

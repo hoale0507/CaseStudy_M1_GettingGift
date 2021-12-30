@@ -45,11 +45,11 @@ class Obstacle{
     drawObstacle(ctx){
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
-        ctx.fillStyle = 'gray';
+        ctx.fillStyle = '#333333';
         ctx.fill();
     }
     moveDown(){
         this.y += this._speed;
-        // this._speed *= 1.001;
+        this._speed *= 1.001;
     }
 }
